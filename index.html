@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="gameCanvas">
+    </canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Game Variables  ctx.beginPath();
+        const documentWidth = document.documentElement.scrollWidth;
+        const documentHeight = document.documentElement.scrollHeight;
+        let basket = { x: 50, y: documentHeight - 30, width: 50, height: 10 };
+        let balls = [];
+        let score = 0;
+        let gameOver = false;
+        let lavel = 1;
+        let countBall = 0;
+
+        canvas.height = documentHeight - 5
+
+        ctx.fillStyle = "transparent"
+        ctx.fillRect(0, 0, documentWidth / 2, documentHeight)
+
+
+
+        // Ball Generator
+        function createBall() {
+            let x = Math.random() * (canvas.width - 20) + 10;
+            balls.push({ x: x, y: 0, radius: 10, speed: 1 });
+        }
+
+        // Draw Basket
+        function drawBasket() {
+            ctx.fillStyle = "blue";
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+        }
+
+        // Draw Balls
+        function drawBalls() {
+            balls.forEach((ball) => {
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.fillStyle = "red";
+                ctx.fill();
+                ctx.closePath();
+            });
+        }
+
+        // Update Ball Positions
+        function updateBalls() {
+            balls.forEach((ball, index) => {
+                ball.y += ball.speed;
+
+                // Check if the ball hits the basket
+                if (
+                    ball.y + ball.radius > basket.y &&
+                    ball.x > basket.x &&
+                    ball.x < basket.x + basket.width
+                ) {
+                    score++;
+                    balls.splice(index, 1); // Remove the ball
+
+                }
+
+                // Check if the ball hits the ground
+                if (ball.y > canvas.height) {
+                    balls.splice(index, 1); // Remove the ball
+                    gameOver = true; // End the game
+                }
+            });
+        }
+
+        // Draw Score
+        function drawScore() {
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 10, 50);
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText("Lavel: " + lavel, 10, 20);
+        }
+
+        // Key Press Events
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowLeft" && basket.x > 0) {
+                basket.x -= 50;
+            } else if (e.key === "ArrowRight" && basket.x + basket.width < canvas.width) {
+                basket.x += 50;
+            }
+        });
+
+        canvas.addEventListener("click", (e) => {
+            if (e.layerX < canvas.width / 2 && basket.x > 0) {
+                basket.x -= 50;
+            } else if (basket.x + basket.width < canvas.width) {
+                basket.x += 50;
+                console.log(e.layerX, canvas.width / 2);
+
+            }
+        })
+
+        // Game Loop
+        function gameLoop() {
+            if (gameOver) {
+                alert("Game Over! Your score: " + score);
+                document.location.reload();
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBasket();
+            drawBalls();
+            drawScore();
+            updateBalls();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function setLavels() {
+            countBall += 1
+            if (countBall <= 1 + lavel * 2) {
+                createBall()
+            } else if (score >= 1 + lavel * 2) {
+                lavel++;
+                countBall = 0
+            }
+        }
+
+
+        // Start Game
+        setInterval(setLavels, 3010 - lavel * 20); // Create a ball every second
+        gameLoop();
+    </script>
+
+</body>
+
+</html>

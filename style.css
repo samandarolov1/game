@@ -1,0 +1,14 @@
+#gameCanvas {
+    border: 1px solid black;
+    display: block;
+    margin: auto;
+    position: relative;
+}
+
+@media screen and (max-width: 380px) {
+#gameCanvas{
+    width: auto;
+    height: auto;
+    margin: 5px;
+}
+}
