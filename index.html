@@ -127,16 +127,16 @@
 
         function setLavels() {
             countBall += 1
-            if (countBall <= 1 + lavel * 2) {
+            if (countBall <= 10 + lavel * 2) {
                 createBall()
-            } else if (score >= 1 + lavel * 2) {
+            } else if (score >= 10 + lavel * 2) {
                 lavel++;
                 countBall = 0
             }
         }
 
         // Start Game
-        setInterval(setLavels, 3010 - lavel * 20); // Create a ball every second
+        setInterval(setLavels, 2010 - lavel * 20); // Create a ball every second
         gameLoop();
     </script>
 
